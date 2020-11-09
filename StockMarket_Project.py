@@ -33,8 +33,8 @@ def main():
                     lowP = i
                 if float(listContents[i][4]) == float(sortP[-2]):
                     highP = i
-            print (f'The stock was highest on {listContents[highP][0]} at ${sortP[-2]}')
-            print (f'The stock was lowest on {listContents[lowP][0]} at ${sortP[0]}')
+            print (f'The stock was highest on {listContents[highP][0]} at ${float(sortP[-2]):.2f}')
+            print (f'The stock was lowest on {listContents[lowP][0]} at ${float(sortP[0]):.2f}')
             userRequest = input("\n" + "Next operation or x to repeat the operations: ")
         elif userRequest == "x":
             print ("\n" + "Enter e to exit, c to change the company of the stock")
