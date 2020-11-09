@@ -1,79 +1,129 @@
 import requests
 import csv
-import datetime
-from dateutil import parser
-from Custom_Functions import*
+import sys
 
-print("Welcome To The Stock Market Program")
+sys.setrecursionlimit(5982)
 
+def main():
+    print ("Welcome to the STOCK PROGRAM" + "\n")
+    stockD, stockP, listContents = stockName()
+    print ("\n" + "Enter e to exit, c to change the company of the stock")
+    print ("r to change the range, h to find the highest and lowest stock price in the range")
+    print ("and i to find the stock price on a specific date" + "\n")
+    lowIndex = 0
+    highIndex = len(stockD)-1
+    userRequest = str(input("Please enter an operation: "))
 
-while True:
-    try:
-        api = "NFMJUNH4NTFPI183"
-        stock = input("\nPlease Enter In The Stock You Would Like To See The Closing Dates For: ")
-        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + stock + "&apikey=" + api + "&datatype=csv"
+    while userRequest != "e":
+        if userRequest == "c":
+            stockD, StockP, listContents = stockName()
+            userRequest = input("\n" + "Next operation or x to repeat the operations: ")
+        elif userRequest == "r":
+            lowIndex, highIndex = between(stockD)
+            userRequest = input("\n" + "Next operation or x to repeat the operations: ")
+        elif userRequest == "i":
+            print (IndivualPrice(stockD, stockP))
+            userRequest = input("\n" + "Next operation or x to repeat the operations: ")
+        elif userRequest == "h":
+            sortP = highLow(stockP, lowIndex, highIndex)
+            lowP = 0
+            highP = 0
+            for i in range(1, len(listContents)):
+                if float(listContents[i][4]) == float(sortP[0]):
+                    lowP = i
+                if float(listContents[i][4]) == float(sortP[-2]):
+                    highP = i
+            print (f'The stock was highest on {listContents[highP][0]} at ${sortP[-2]}')
+            print (f'The stock was lowest on {listContents[lowP][0]} at ${sortP[0]}')
+            userRequest = input("\n" + "Next operation or x to repeat the operations: ")
+        elif userRequest == "x":
+            print ("\n" + "Enter e to exit, c to change the company of the stock")
+            print ("r to change the range and i to find the stock price on a specific date" + "\n")
+            userRequest = input("Next operation: ")
+        else:
+             userRequest = input("Please enter a valid operation: ")
+    sys.exit()
 
-        res = requests.get(url)
+def stockName():
+    stockSymbol = input("Please enter a stock symbol: ")
+    stockDetails = {}
+    stockD = []
+    stockP = []
+    API_KEY = "FO14N65DAE1QVV9A"
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={stockSymbol}&outputsize=full&apikey={API_KEY}&datatype=csv"
+    response = requests.get(url)
+    contents = response.text
+    listContents = list(csv.reader(contents.splitlines()))
+    for i in range(1, len(listContents)):
+        date = listContents[i][0]
+        price = listContents[i][4]
 
-        src = res.text
-        con = list(csv.reader(src.splitlines()))
+        stockD.append(date)
+        stockP.append(price)
+    return stockD, stockP, listContents
 
-        stockD = []
-        stockP = []
+def between(stockD):
+    stockDate1 = str(input("Please enter the older date in the format yyyy-mm-dd: "))
+    stockDate2 = str(input("Please enter the latest date in the format yyyy-mm-dd: "))
+    dateCheck1 = True
+    dateCheck2 = True
 
+    while dateCheck1 != False:
+        for i in range(0,len(stockD)-1):
+            if (str(stockD[i]) == stockDate1):
+                dateCheck1 = False
+        if dateCheck1 == True:
+            stockDate1 = str(input("\n" + "Either you entered a date that falls on a weekend or its not in the format yyyy-mm-dd" +"\n" "Please re-enter the older date: "))
 
-        for i in range(1, len(con)):
-            date = con[i][0]
-            price = con[i][4]
+    while dateCheck2 != False:
+        for i in range(0,len(stockD)-1):
+            if (str(stockD[i]) == stockDate2):
+                dateCheck2 = False
+        if dateCheck2 == True:
+            stockDate2 = str(input("\n" + "Either you entered a date that falls on a weekend or its not in the format yyyy-mm-dd" +"\n" "Please re-enter the latest date: "))
 
-            stockD.append(date)
-            stockP.append(price)
-        break
-   # IndexError setup for list, since if the stock enterted is not valid the list would be out of bounds since there
-   # would be nothing to put in there
-    except IndexError:
-        print("Please Enter A Valid Stock")
+    lowIndex = 0
+    highIndex = 0
+    newDic = {}
+    temp = ""
 
-## try catch error made to catch if the user puts the invalid format of the date, or if the user enters the weekend date
-while True:
-    try:
-        print(f"\nClosing Prices Available From {stockD[-1]} to {stockD[0]}\n")
+    for i in range(1, len(stockD)-1):
+        if stockD[i] == stockDate1:
+            highIndex = i
+        elif stockD[i] == stockDate2:
+            lowIndex = i
+    if lowIndex > highIndex:
+        i = highIndex
+        highIndex = lowIndex
+        lowIndex = i
 
-        startD = parser.parse(input("Enter The Starting Date In YY MM DD: ")).date()
-        endD = parser.parse(input("Enter The Ending Date In YY MM DD: ")).date()
+    return lowIndex, highIndex
 
-        if startD > endD:
-            startD, endD = endD, startD
+def IndivualPrice(stockD, stockP):
+    # Implements a binary search with recursion to find the stock price on a date
 
-        startDIndx = binarySDate(stockD, startD, 0, len(stockD) - 1)
-        endDIndx = binarySDate(stockD, endD, 0, len(stockD) - 1)
+    dateInput = str(input("In the format yyyy-mm-dd, please enter the date you would like the stock price for : "))
+    dateCheck = True
 
-        rangedStockP = stockP[endDIndx:startDIndx + 1]
+    while dateCheck != False:
+        for i in range(0,len(stockD)-1):
+            if (str(stockD[i]) == dateInput):
+                return (f'The stock price on {stockD[i]} was ${float(stockP[i]):.2f}')
+        dateInput = str(input("Either you entered a date that falls on a weekend or its not in the format yyyy-mm-dd" +"\n" "Please re-enter the date: "))
 
-        break
+def highLow(stockP, start, end):
+    stockSort = []
 
-    except:
-        print("The Date You Have Entered Is Invalid, Please Try Again, Also Remember The Stock Market Is Closed On The Weekends ")
+    for i in range(start, end):
+        stockSort.append(stockP[i])
 
-print(rangedStockP)
+    for i in range(start, end):
+        temp = stockSort[i]
+        temp2 = i - 1
+        while (temp2 >=0) and (float(stockSort[temp2]) > float(temp)):
+            stockSort[temp2 + 1] = stockSort[temp2]
+            temp2 = temp2 - 1
+        stockSort[temp2 + 1] = temp
+    return stockSort
 
-
-# Ask if we need to have a ui since it would make the code harder to read, and more complicated for no reason
-# if we do make the ui bruh
-# something like this
-# already made all of the try catches
-# print("\nHello Welcome, Press:\n1 To Change The Stock\n2 To Change The Date Range\n3 To Exit The Program")
-
-
-#First sort the rangedStockP using any sorting method we learnd its up to you man, won't be able to help since i'm really sick
-# also put the sorting function in the custom_functions.py it makes our main less cluttered
-# once the sorting is done get the highest and lowest value from the sort
-
-# once you got those two values use the custom binarySPrice function to find there index which then corresponds to the date
-# its in the custom functions if it doesn't work let me know
-
-# binarySPrice(stockPrice, highValueNum, 0, len(stockPrice)-1) = index number of the highest closing value in the stockPrice array
-# binarySPrice(stockPrice, lowValueNum, 0, len(stockPrice)-1) = index number of the lowest closing value in the stockPrice array
-
-# then just print this to finish it off
-# print(f"the highest closing price was on {stockDate[highIndxNum]} with its price being {stockDate[highIndxNum]})
+main()
