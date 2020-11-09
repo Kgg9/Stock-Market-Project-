@@ -112,7 +112,6 @@ def IndivualPrice(stockD, stockP):
         dateInput = str(input("Either you entered a date that falls on a weekend or its not in the format yyyy-mm-dd" +"\n" "Please re-enter the date: "))
 
 def highLow(stockP, start, end):
-    print (start, end)
     stockSort = []
 
     for i in range(start, end):
