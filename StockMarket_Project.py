@@ -2,8 +2,6 @@ import requests
 import csv
 import sys
 
-sys.setrecursionlimit(5982)
-
 def main():
     print ("Welcome to the STOCK PROGRAM" + "\n")
     stockD, stockP, listContents = stockName()
@@ -28,7 +26,7 @@ def main():
             sortP = highLow(stockP, lowIndex, highIndex)
             lowP = 0
             highP = 0
-            for i in range(1, len(listContents)):
+            for i in range(lowIndex, highIndex):
                 if float(listContents[i][4]) == float(sortP[0]):
                     lowP = i
                 if float(listContents[i][4]) == float(sortP[-2]):
