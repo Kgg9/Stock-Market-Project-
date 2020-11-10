@@ -58,9 +58,9 @@ def main():
             for i in range(lowIndex, highIndex):
 
                 #if statements find the date that corresponds to the highest, and lowest closing price
-                if float(listContents[i][4]) == float(sortP[0]):
+                if str(listContents[i][4]) == str(sortP[0]):
                     lowP = i
-                if float(listContents[i][4]) == float(sortP[-2]):
+                if str(listContents[i][4]) == str(sortP[-2]):
                     highP = i
 
             #prints out the highest, and lowest closing price for the date given
