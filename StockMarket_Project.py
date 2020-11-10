@@ -15,7 +15,8 @@ def main():
     print ("r to change the range, h to find the highest and lowest stock price in the range")
     print ("and i to find the stock price on a specific date" + "\n")
 
-
+    # Automtically setting the highest and lowest value for the high low function
+    # to everything in the last 20 years, if user doesnt specify range
     lowIndex = 0
     highIndex = len(stockD)-1
 
@@ -26,7 +27,6 @@ def main():
     while userRequest != "e":
 
         # If user types in c in userRequest allows them to change the initial stock that they picked earlier
-
         if userRequest == "c":
             stockD, StockP, listContents = stockName()
 
@@ -48,7 +48,7 @@ def main():
         # range they picked
         elif userRequest == "h":
 
-            # sorrtP is a list with the sorted price values from the date range given by the user
+            # sortP is a list with the sorted price values from the date range given by the user
             sortP = highLow(stockP, lowIndex, highIndex)
             lowP = 0
             highP = 0
@@ -84,7 +84,8 @@ def main():
 
 # finding stock function
 def stockName():
-    # user inputs a stock ticker
+
+    # user inputs a stock symbol
     stockSymbol = input("Please enter a stock symbol: ")
 
     # parallel arrays made for the date, and price
@@ -124,7 +125,7 @@ def between(stockD):
     dateCheck1 = True
     dateCheck2 = True
 
-    # while loop will stop once dateCheck21 becomes false
+    # while loop will stop once dateCheck1 becomes false
     while dateCheck1 != False:
         # for loop made to check whether the date exists or not, or is not a weekend
         for i in range(0,len(stockD)-1):
@@ -146,6 +147,7 @@ def between(stockD):
         if dateCheck2 == True:
             stockDate2 = str(input("\n" + "Either you entered a date that falls on a weekend or its not in the format yyyy-mm-dd" +"\n" "Please re-enter the latest date: "))
 
+    # variables to store the index of the two dates above is initialized
     lowIndex = 0
     highIndex = 0
 
@@ -155,6 +157,7 @@ def between(stockD):
             highIndex = i
         elif stockD[i] == stockDate2:
             lowIndex = i
+
     # switches the index value if the starting date is bigger then the ending date
     if lowIndex > highIndex:
         i = highIndex
@@ -177,10 +180,11 @@ def IndivualPrice(stockD, stockP):
     while dateCheck != False:
         # for loop made to check whether the date given by the user exists or not
         for i in range(0,len(stockD)-1):
-            # if the date exists, while loop turns false and stops, recording the date into the input
+            # if the date exists, while loop turns false and stops, returning the price on the specified date
             if (str(stockD[i]) == dateInput):
-                # if g date is not valid, while loop doesn't stop and the date is asked again
                 return (f'The stock price on {stockD[i]} was ${float(stockP[i]):.2f}')
+
+                # if the date is not valid, while loop doesn't stop and the date is asked again
         dateInput = str(input("Either you entered a date that falls on a weekend or its not in the format yyyy-mm-dd" +"\n" "Please re-enter the date: "))
 
 
