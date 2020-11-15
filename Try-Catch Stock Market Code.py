@@ -68,4 +68,4 @@ while (choice!="3"):
                 break
 
             except:
-                print("The Date You Have Entered Is Invalid, Please Try Again, Also Remember The Stock Market Is Closed On The Weekends ")
+                print("The Date You Have Entered Is Invalid, Please Try Again, Also Remember The Stock Market Is Closed On The Weekends")
